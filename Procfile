@@ -1,0 +1,1 @@
+web: bundle exec ruby fscrapper.rb -p $PORT
