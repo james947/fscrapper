@@ -5,11 +5,14 @@ require 'json'
 $token = ENV['TOKEN']
 $url = ENV['URL']
 
+puts "Accesssss token: #{$token}"
+puts "URL: #{$url}"
 
 
 $auto = false
 
 def automatic
+    p $auto
     while $auto do
       Telegram::Bot::Client.run($token)do |bot|
         uri = URI($url)
