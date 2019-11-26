@@ -2,8 +2,8 @@ require 'telegram/bot'
 require 'net/http'
 require 'json'
 
-$token = ENV['TOKEN']
-$url = ENV['URL']
+# $token = ENV['TOKEN']
+# $url = ENV['URL']
 
 $auto = false
 
@@ -11,6 +11,7 @@ def automatic
     p $auto
     while $auto do
       Telegram::Bot::Client.run($token)do |bot|
+        p bot.listen
         uri = URI($url)
         response = Net::HTTP.get(uri)
         data =  JSON.parse(response)['response']
@@ -25,7 +26,7 @@ def automatic
             text: "#{text}"
         )
       end
-      sleep 5
+      sleep 60
     end
   end
 
@@ -55,7 +56,6 @@ Telegram::Bot::Client.run($token) do |bot|
             p "clicked stop #{$auto}"
         when '/ac'
           $auto = true
-          print('Auto set to true')
           automatic
         end
     end
