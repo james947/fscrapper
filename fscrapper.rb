@@ -2,16 +2,16 @@ require 'telegram/bot'
 require 'net/http'
 require 'json'
 
-# $token = ENV['TOKEN']
-# $url = ENV['URL']
+$token = ENV['TOKEN']
+$url = ENV['URL']
+
+
 
 $auto = false
 
 def automatic
-    p $auto
     while $auto do
       Telegram::Bot::Client.run($token)do |bot|
-        p bot.listen
         uri = URI($url)
         response = Net::HTTP.get(uri)
         data =  JSON.parse(response)['response']
@@ -49,7 +49,6 @@ Telegram::Bot::Client.run($token) do |bot|
                   text << "#{key}: #{value} \n"
               end
           end
-          print(message.chat.id)
           bot.api.send_message(chat_id: message.chat.id, text: "#{text}")
         when '/s'
             $auto = false
@@ -57,6 +56,8 @@ Telegram::Bot::Client.run($token) do |bot|
         when '/ac'
           $auto = true
           automatic
+        else '/none'
+          bot.api.send_message(chat_id: message.chat.id, text: "waiting.....")
         end
     end
 end
