@@ -1,1 +1,1 @@
-web: bundle exec ruby fscrapper.rb
+web: ruby fscrapper.rb
