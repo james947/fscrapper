@@ -5,31 +5,24 @@ require 'json'
 $token = ENV['TOKEN']
 $url = ENV['URL']
 
-puts "Accesssss token: #{$token}"
-puts "URL: #{$url}"
+auto = false
 
 
-$auto = false
-
-def automatic
-    p $auto
-    while $auto do
-      Telegram::Bot::Client.run($token)do |bot|
-        uri = URI($url)
-        response = Net::HTTP.get(uri)
-        data =  JSON.parse(response)['response']
-        text= ''
-        data.each do |key, value|
-          key.each do |key, value|
-            text << "#{key}: #{value} \n"
-          end
+def fetch_data
+    Telegram::Bot::Client.run($token)do |bot|
+      uri = URI($url)
+      response = Net::HTTP.get(uri)
+      data =  JSON.parse(response)['response']
+      text= ''
+      data.each do |key, value|
+        key.each do |key, value|
+          text << "#{key}: #{value} \n"
         end
-        bot.api.send_message(
-            chat_id: 257133028,
-            text: "#{text}"
-        )
       end
-      sleep 60
+      bot.api.send_message(
+          chat_id: 257133028,
+          text: "#{text}"
+      )
     end
   end
 
@@ -43,22 +36,20 @@ Telegram::Bot::Client.run($token) do |bot|
           msg = ['/mc to manually get live forex ','/ac to automatically get live forex data']
           msg.each { |msg| bot.api.send_message(chat_id: message.chat.id, text: msg) }
         when '/mc'
-          uri = URI($url)
-          response = Net::HTTP.get(uri)
-          data =  JSON.parse(response)['response']
-          text= ''
-          data.each do |key, value|
-              key.each do |key, value|
-                  text << "#{key}: #{value} \n"
-              end
-          end
-          bot.api.send_message(chat_id: message.chat.id, text: "#{text}")
+          fetch_data
         when '/s'
-            $auto = false
-            p "clicked stop #{$auto}"
+          fetch_data
+          auto = false
+          p "clicked stop #{$auto}"
         when '/ac'
-          $auto = true
-          automatic
+          automate = true
+          while automate
+            if automate == false
+              break
+            end
+            fetch_data
+            sleep 5
+          end
         else '/none'
           bot.api.send_message(chat_id: message.chat.id, text: "waiting.....")
         end
